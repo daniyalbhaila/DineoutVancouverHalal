@@ -259,6 +259,25 @@ function shuffleArray<T>(items: T[], seed: string) {
   return array;
 }
 
+function distanceKm(
+  origin: { lat: number; lng: number },
+  restaurant: HalalRestaurant
+): number {
+  if (restaurant.lat === null || restaurant.lng === null) return Infinity;
+  const rad = (value: number) => (value * Math.PI) / 180;
+  const dLat = rad(restaurant.lat - origin.lat);
+  const dLng = rad(restaurant.lng - origin.lng);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(rad(origin.lat)) *
+      Math.cos(rad(restaurant.lat)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const earthRadiusKm = 6371;
+  return earthRadiusKm * c;
+}
+
 function SwipeCard({
   restaurant,
   className,
