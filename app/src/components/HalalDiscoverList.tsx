@@ -52,6 +52,7 @@ export default function HalalDiscoverList({
     null
   );
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [locationResolved, setLocationResolved] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const cities = useMemo(() => {
@@ -68,17 +69,25 @@ export default function HalalDiscoverList({
 
   useEffect(() => {
     if (!navigator.geolocation) return;
+    const timeout = window.setTimeout(() => {
+      setLocationResolved(true);
+    }, 1500);
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setUserLocation({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
+        setLocationResolved(true);
+        window.clearTimeout(timeout);
       },
       () => {
         setLocationError("Enable location to sort by distance.");
+        setLocationResolved(true);
+        window.clearTimeout(timeout);
       }
     );
+    return () => window.clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
@@ -152,6 +161,24 @@ export default function HalalDiscoverList({
     : sortMode === "rating"
       ? "Sorting by rating"
       : locationError ?? "Sorting by name";
+
+  if (view === "list" && sortMode === "distance" && !locationResolved) {
+    return (
+      <div className="space-y-6">
+        <Card className="fade-rise">
+          <CardContent className="space-y-3">
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">
+              Halal Restaurant Discovery
+            </p>
+            <h1 className="text-3xl font-semibold">Finding places near you</h1>
+            <p className="text-sm text-[var(--muted)]">
+              Waiting for location to sort by distance.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <Tabs value={view} onValueChange={setView}>
@@ -508,7 +535,7 @@ function MapView({
       });
   }, [restaurants, hydrated, radiusKm, userLocation]);
 
-  const center = userLocation
+  const center: [number, number] = userLocation
     ? [userLocation.lng, userLocation.lat]
     : VANCOUVER_CENTER;
 
