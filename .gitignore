@@ -1,0 +1,16 @@
+.DS_Store
+.env
+.env.local
+.env.*.local
+
+app/.next
+app/node_modules
+app/.env
+app/.env.local
+app/.env.*.local
+
+data/*.csv
+!data/.gitkeep
+data/tag_failures.json
+reports/
+halalList.html
