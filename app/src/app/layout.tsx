@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Newsreader } from "next/font/google";
 import "./globals.css";
+import SiteHeader from "../components/SiteHeader";
 
 const manrope = Manrope({
   variable: "--font-sans",
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${manrope.variable} ${newsreader.variable} antialiased`}>
+        <SiteHeader />
         {children}
       </body>
     </html>

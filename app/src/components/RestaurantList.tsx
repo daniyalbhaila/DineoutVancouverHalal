@@ -4,6 +4,10 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { formatPrice } from "../lib/format";
 import type { RestaurantSummary } from "../lib/data";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { Input } from "./ui/input";
 
 const PAGE_SIZE = 24;
 
@@ -97,44 +101,38 @@ export default function RestaurantList({
 
   return (
     <div className="space-y-8">
-      <header className="card-surface fade-rise px-6 py-7">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">
-              Dine Out Vancouver 2026
-            </p>
-            <h1 className="mt-2 text-4xl font-semibold">Halal-friendly menus</h1>
-            <div className="mt-2 max-w-2xl text-sm text-[var(--muted)]">
-              <p>
-                Halal-friendly means each course has at least one seafood or vegetarian option and
-                alcohol is not included in the menu price. Alcohol may be served. Cross-contamination
-                risk possible.
+      <Card className="fade-rise">
+        <CardContent className="space-y-5">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">
+                Dine Out Vancouver 2026
               </p>
-              <p className="mt-2">
-                Halal listed means the restaurant appears in external halal directories.
-              </p>
+              <h1 className="mt-2 text-4xl font-semibold">Halal-friendly menus</h1>
+              <div className="mt-2 max-w-2xl text-sm text-[var(--muted)]">
+                <p>
+                  Halal-friendly means each course has at least one seafood or vegetarian option and
+                  alcohol is not included in the menu price. Alcohol may be served. Cross-contamination
+                  risk possible.
+                </p>
+                <p className="mt-2">
+                  Halal listed means the restaurant appears in external halal directories.
+                </p>
+              </div>
             </div>
+            <Badge variant="secondary">{filtered.length} restaurants</Badge>
           </div>
-          <div className="rounded-full bg-white/80 px-4 py-2 text-xs text-[var(--muted)]">
-            {filtered.length} restaurants
+          <div className="hidden flex-wrap gap-2 text-xs text-[var(--muted)] md:flex">
+            <Badge variant="outline">Step 1: Choose confidence</Badge>
+            <Badge variant="outline">Step 2: Set constraints</Badge>
+            <Badge variant="outline">Step 3: Pick a restaurant</Badge>
           </div>
-        </div>
-        <div className="mt-6 hidden flex-wrap gap-2 text-xs text-[var(--muted)] md:flex">
-          <span className="rounded-full border border-[var(--stroke)] bg-white px-3 py-1">
-            Step 1: Choose confidence
-          </span>
-          <span className="rounded-full border border-[var(--stroke)] bg-white px-3 py-1">
-            Step 2: Set constraints
-          </span>
-          <span className="rounded-full border border-[var(--stroke)] bg-white px-3 py-1">
-            Step 3: Pick a restaurant
-          </span>
-        </div>
-      </header>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
         <div className="space-y-4">
-          <details className="card-surface px-5 py-4 md:hidden" open>
+          <details className="rounded-3xl border border-[var(--stroke)] bg-white px-5 py-4 md:hidden" open>
             <summary className="cursor-pointer text-sm font-semibold text-[var(--ink)]">
               Filters
               <span className="ml-2 text-xs font-normal text-[var(--muted)]">
@@ -157,23 +155,27 @@ export default function RestaurantList({
             </div>
           </details>
 
-          <aside className="card-surface hidden px-5 py-6 md:block">
-            <h2 className="text-lg font-semibold">Filters</h2>
-            <p className="mt-1 text-xs text-[var(--muted)]">Step-by-step guidance.</p>
-            <div className="mt-5">
-              <FilterPanel
-                confidence={confidence}
-                setConfidence={setConfidence}
-                query={query}
-                setQuery={setQuery}
-                minPrice={minPrice}
-                setMinPrice={setMinPrice}
-                maxPrice={maxPrice}
-                setMaxPrice={setMaxPrice}
-                filters={filters}
-                toggleFilter={toggleFilter}
-              />
-            </div>
+          <aside className="hidden md:block">
+            <Card>
+              <CardContent>
+                <h2 className="text-lg font-semibold">Filters</h2>
+                <p className="mt-1 text-xs text-[var(--muted)]">Step-by-step guidance.</p>
+                <div className="mt-5">
+                  <FilterPanel
+                    confidence={confidence}
+                    setConfidence={setConfidence}
+                    query={query}
+                    setQuery={setQuery}
+                    minPrice={minPrice}
+                    setMinPrice={setMinPrice}
+                    maxPrice={maxPrice}
+                    setMaxPrice={setMaxPrice}
+                    filters={filters}
+                    toggleFilter={toggleFilter}
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </aside>
         </div>
 
@@ -189,9 +191,13 @@ export default function RestaurantList({
           </div>
 
           {visible.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-[var(--stroke)] bg-white/60 p-6 text-center text-sm text-[var(--muted)]">
-              No restaurants match these filters yet.
-            </div>
+            <Card>
+              <CardContent>
+                <p className="text-sm text-[var(--muted)]">
+                  No restaurants match these filters yet.
+                </p>
+              </CardContent>
+            </Card>
           )}
 
           <div ref={sentinelRef} />
@@ -234,24 +240,22 @@ function FilterPanel({
           Halal listed means the restaurant appears in external halal directories.
         </p>
         <div className="mt-2 flex gap-2">
-          <button
+          <Button
             type="button"
+            size="sm"
+            variant={confidence === "friendly" ? "default" : "outline"}
             onClick={() => setConfidence("friendly")}
-            className={`chip px-3 py-1 text-xs transition ${
-              confidence === "friendly" ? "chip-active" : ""
-            }`}
           >
             Halal-friendly
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            size="sm"
+            variant={confidence === "listed" ? "default" : "outline"}
             onClick={() => setConfidence("listed")}
-            className={`chip px-3 py-1 text-xs transition ${
-              confidence === "listed" ? "chip-active" : ""
-            }`}
           >
             Halal listed only
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -260,21 +264,18 @@ function FilterPanel({
           Step 2: Constraints
         </p>
         <div className="mt-2 flex flex-col gap-3">
-          <input
-            className="w-full rounded-full border border-[var(--stroke)] bg-white px-4 py-2 text-sm"
+          <Input
             placeholder="Search restaurants"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
           <div className="flex gap-2">
-            <input
-              className="w-full rounded-full border border-[var(--stroke)] bg-white px-4 py-2 text-sm"
+            <Input
               placeholder="Min $"
               value={minPrice}
               onChange={(event) => setMinPrice(event.target.value)}
             />
-            <input
-              className="w-full rounded-full border border-[var(--stroke)] bg-white px-4 py-2 text-sm"
+            <Input
               placeholder="Max $"
               value={maxPrice}
               onChange={(event) => setMaxPrice(event.target.value)}
@@ -326,15 +327,14 @@ function FilterChip({
   onClick: () => void;
 }) {
   return (
-    <button
+    <Button
       type="button"
+      size="sm"
+      variant={active ? "default" : "outline"}
       onClick={onClick}
-      className={`chip px-3 py-1 text-xs transition ${
-        active ? "chip-active" : ""
-      }`}
     >
       {label}
-    </button>
+    </Button>
   );
 }
 
@@ -350,69 +350,55 @@ function RestaurantCard({
   if (restaurant.containsAlcohol) disclaimers.push("Alcohol served");
 
   return (
-    <Link
-      href={`/restaurants/${restaurant.slug}`}
-      className="card-surface card-hover group block px-4 py-4"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h3 className="text-base font-semibold text-[var(--ink)]">
-            {restaurant.name}
-          </h3>
-          <div className="mt-1 flex flex-wrap gap-1">
-            {restaurant.menuTypes.slice(0, 2).map((type) => (
-              <span
-                key={`${restaurant.id}-${type}`}
-                className="rounded-full bg-white px-2 py-0.5 text-[11px] text-[var(--muted)]"
-              >
-                {type}
-              </span>
-            ))}
+    <Card className="transition hover:shadow-md">
+      <CardContent className="space-y-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <Link href={`/restaurants/${restaurant.slug}`}>
+              <h3 className="text-base font-semibold text-[var(--ink)]">
+                {restaurant.name}
+              </h3>
+            </Link>
+            <div className="mt-1 flex flex-wrap gap-1">
+              {restaurant.menuTypes.slice(0, 2).map((type) => (
+                <Badge key={`${restaurant.id}-${type}`} variant="outline">
+                  {type}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          <div className="text-right">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">
+              From
+            </span>
+            <p className="text-lg font-semibold text-[var(--accent)]">
+              {formatPrice(restaurant.fromPrice)}
+            </p>
           </div>
         </div>
-        <div className="text-right">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">
-            From
-          </span>
-          <p className="text-lg font-semibold text-[var(--accent)]">
-            {formatPrice(restaurant.fromPrice)}
+
+        <div className="flex flex-wrap gap-2 text-xs">
+          <Badge variant={restaurant.halalFriendly ? "default" : "secondary"}>
+            {restaurant.halalFriendly ? "Halal-friendly" : "Not enough halal options"}
+          </Badge>
+          {restaurant.halalSource && <Badge variant="warning">Halal listed</Badge>}
+        </div>
+
+        {!hideDisclaimers && disclaimers.length > 0 && (
+          <p className="text-xs text-[var(--muted)]">{disclaimers.join(" · ")}</p>
+        )}
+
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--muted)]">
+            Halal-friendly dishes
+          </p>
+          <p className="mt-1 text-sm text-[var(--ink)]">
+            {restaurant.halalDishes.length > 0
+              ? restaurant.halalDishes.join(" · ")
+              : "No clear halal-friendly dishes listed"}
           </p>
         </div>
-      </div>
-
-      <div className="mt-3 flex flex-wrap gap-2 text-xs">
-        <span
-          className={`rounded-full px-2 py-1 ${
-            restaurant.halalFriendly
-              ? "bg-[var(--accent)] text-white"
-              : "bg-white text-[var(--muted)]"
-          }`}
-        >
-          {restaurant.halalFriendly ? "Halal-friendly" : "Not enough halal options"}
-        </span>
-        {restaurant.halalSource && (
-          <span className="rounded-full bg-[var(--accent-warm)] px-2 py-1 text-white">
-            Halal listed
-          </span>
-        )}
-      </div>
-
-      {!hideDisclaimers && disclaimers.length > 0 && (
-        <div className="mt-2 text-xs text-[var(--muted)]">
-          {disclaimers.join(" · ")}
-        </div>
-      )}
-
-      <div className="mt-3">
-        <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--muted)]">
-          Halal-friendly dishes
-        </p>
-        <p className="mt-1 text-sm text-[var(--ink)]">
-          {restaurant.halalDishes.length > 0
-            ? restaurant.halalDishes.join(" · ")
-            : "No clear halal-friendly dishes listed"}
-        </p>
-      </div>
-    </Link>
+      </CardContent>
+    </Card>
   );
 }

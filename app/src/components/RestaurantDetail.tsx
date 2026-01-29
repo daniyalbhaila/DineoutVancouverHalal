@@ -4,6 +4,10 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { formatPriceRange, normalizeMenuType } from "../lib/format";
 import type { MenuVariant, RestaurantDetail } from "../lib/data";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 type VariantTab = {
   key: string;
@@ -21,7 +25,7 @@ export default function RestaurantDetailView({
       const baseLabel = normalizeMenuType(menu.title);
       const variantLabel = menu.variant > 1 ? ` ${menu.variant}` : "";
       return {
-        key: `${menu.id}`,
+        key: menu.id,
         label: `${baseLabel}${variantLabel}`,
         menu,
       };
@@ -29,7 +33,6 @@ export default function RestaurantDetailView({
   }, [restaurant.menuVariants]);
 
   const [activeTab, setActiveTab] = useState(tabs[0]?.key ?? "");
-  const activeMenu = tabs.find((tab) => tab.key === activeTab)?.menu;
 
   const overallPork = restaurant.menuVariants.some(
     (menu) => menu.tags?.containsPork === "yes"
@@ -42,132 +45,113 @@ export default function RestaurantDetailView({
   return (
     <div className="min-h-screen px-4 pb-16 pt-8 md:px-10">
       <div className="mx-auto max-w-4xl space-y-6">
-        <header className="card-surface fade-rise p-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
-            Dine Out Vancouver
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold">{restaurant.name}</h1>
-
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            {restaurant.dineoutUrl && (
-              <Link
-                href={restaurant.dineoutUrl}
-                target="_blank"
-                className="rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white"
-              >
-                View on Dine Out
-              </Link>
-            )}
-            {restaurant.halalSource && (
-              <span className="rounded-full bg-[var(--accent-warm)] px-3 py-1 text-xs text-white">
-                Halal listed
-              </span>
-            )}
-            {!hideDisclaimers && overallPork && (
-              <span className="rounded-full bg-white px-3 py-1 text-xs text-[var(--muted)]">
-                Cross-contamination risk
-              </span>
-            )}
-            {!hideDisclaimers && overallAlcohol && (
-              <span className="rounded-full bg-white px-3 py-1 text-xs text-[var(--muted)]">
-                Alcohol served
-              </span>
-            )}
-          </div>
-
-          {!hideDisclaimers && (
-            <p className="mt-4 text-sm text-[var(--muted)]">
-              Halal-friendly means each course has at least one seafood or vegetarian option and
-              alcohol is not included in the menu price. Alcohol may be served. Cross-contamination
-              risk possible.
-            </p>
-          )}
-        </header>
-
-        <section className="card-surface p-6">
-          <div className="flex flex-wrap gap-2">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                type="button"
-                onClick={() => setActiveTab(tab.key)}
-                className={`chip px-3 py-1 text-xs transition ${
-                  activeTab === tab.key ? "chip-active" : ""
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {activeMenu ? (
-            <div className="mt-6 space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
-                    Menu price
-                  </p>
-                  <p className="text-lg font-semibold text-[var(--ink)]">
-                    {formatPriceRange(activeMenu.priceMin, activeMenu.priceMax)}
-                  </p>
-                </div>
-                <div className="text-xs text-[var(--muted)]">
-                  {activeMenu.tags?.halalFriendly === "yes"
-                    ? "Halal-friendly"
-                    : "Not enough halal options"}
-                </div>
-              </div>
-
-              {activeMenu.tags && (
-                <div className="flex flex-wrap gap-2 text-xs">
-                  {activeMenu.tags.containsPork === "yes" && (
-                    <span className="rounded-full bg-white px-3 py-1 text-[var(--muted)]">
-                      Contains pork
-                    </span>
-                  )}
-                  {activeMenu.tags.containsAlcohol === "yes" && (
-                    <span className="rounded-full bg-white px-3 py-1 text-[var(--muted)]">
-                      Alcohol listed
-                    </span>
-                  )}
-                  {activeMenu.tags.hasSeafood === "yes" && (
-                    <span className="rounded-full bg-white px-3 py-1 text-[var(--muted)]">
-                      Seafood options
-                    </span>
-                  )}
-                  {activeMenu.tags.hasVegetarian === "yes" && (
-                    <span className="rounded-full bg-white px-3 py-1 text-[var(--muted)]">
-                      Vegetarian options
-                    </span>
-                  )}
-                </div>
-              )}
-
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--muted)]">
-                  Halal-friendly dishes
-                </p>
-                <p className="mt-2 text-sm text-[var(--ink)]">
-                  {activeMenu.tags?.halalDishes?.length
-                    ? activeMenu.tags.halalDishes.join(" · ")
-                    : "No clear halal-friendly dishes listed"}
-                </p>
-              </div>
-
-              <details className="rounded-xl border border-dashed border-[var(--stroke)] bg-white/70 px-4 py-3">
-                <summary className="cursor-pointer text-sm text-[var(--muted)]">
-                  Show full menu text
-                </summary>
-                <pre className="mt-3 whitespace-pre-wrap text-sm text-[var(--ink)]">
-                  {activeMenu.rawText || "Menu text not available."}
-                </pre>
-              </details>
+        <Card className="fade-rise">
+          <CardContent className="space-y-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
+                Dine Out Vancouver
+              </p>
+              <h1 className="mt-2 text-3xl font-semibold">{restaurant.name}</h1>
             </div>
-          ) : (
-            <p className="mt-6 text-sm text-[var(--muted)]">No menu variants available.</p>
-          )}
-        </section>
+
+            <div className="flex flex-wrap items-center gap-3">
+              {restaurant.dineoutUrl && (
+                <Button asChild>
+                  <Link href={restaurant.dineoutUrl} target="_blank">
+                    View on Dine Out
+                  </Link>
+                </Button>
+              )}
+              {restaurant.halalSource && <Badge variant="warning">Halal listed</Badge>}
+              {!hideDisclaimers && overallPork && (
+                <Badge variant="outline">Cross-contamination risk</Badge>
+              )}
+              {!hideDisclaimers && overallAlcohol && (
+                <Badge variant="outline">Alcohol served</Badge>
+              )}
+            </div>
+
+            {!hideDisclaimers && (
+              <p className="text-sm text-[var(--muted)]">
+                Halal-friendly means each course has at least one seafood or vegetarian option and
+                alcohol is not included in the menu price. Alcohol may be served. Cross-contamination
+                risk possible.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="flex flex-wrap">
+                {tabs.map((tab) => (
+                  <TabsTrigger key={tab.key} value={tab.key}>
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              {tabs.map((tab) => (
+                <TabsContent key={tab.key} value={tab.key}>
+                  <MenuVariantPanel menu={tab.menu} />
+                </TabsContent>
+              ))}
+            </Tabs>
+          </CardContent>
+        </Card>
       </div>
+    </div>
+  );
+}
+
+function MenuVariantPanel({ menu }: { menu: MenuVariant }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Menu price</p>
+          <p className="text-lg font-semibold text-[var(--ink)]">
+            {formatPriceRange(menu.priceMin, menu.priceMax)}
+          </p>
+        </div>
+        <Badge variant={menu.tags?.halalFriendly === "yes" ? "default" : "secondary"}>
+          {menu.tags?.halalFriendly === "yes" ? "Halal-friendly" : "Not enough halal options"}
+        </Badge>
+      </div>
+
+      {menu.tags && (
+        <div className="flex flex-wrap gap-2 text-xs">
+          {menu.tags.containsPork === "yes" && <Badge variant="outline">Contains pork</Badge>}
+          {menu.tags.containsAlcohol === "yes" && (
+            <Badge variant="outline">Alcohol listed</Badge>
+          )}
+          {menu.tags.hasSeafood === "yes" && <Badge variant="secondary">Seafood options</Badge>}
+          {menu.tags.hasVegetarian === "yes" && (
+            <Badge variant="secondary">Vegetarian options</Badge>
+          )}
+        </div>
+      )}
+
+      <div>
+        <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--muted)]">
+          Halal-friendly dishes
+        </p>
+        <p className="mt-2 text-sm text-[var(--ink)]">
+          {menu.tags?.halalDishes?.length
+            ? menu.tags.halalDishes.join(" · ")
+            : "No clear halal-friendly dishes listed"}
+        </p>
+      </div>
+
+      <details className="rounded-2xl border border-dashed border-[var(--stroke)] bg-white/70 px-4 py-3">
+        <summary className="cursor-pointer text-sm text-[var(--muted)]">
+          Show full menu text
+        </summary>
+        <pre className="mt-3 whitespace-pre-wrap text-sm text-[var(--ink)]">
+          {menu.rawText || "Menu text not available."}
+        </pre>
+      </details>
     </div>
   );
 }

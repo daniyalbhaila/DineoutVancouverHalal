@@ -1,12 +1,14 @@
-import RestaurantList from "../components/RestaurantList";
-import { getRestaurantSummaries } from "../lib/data";
+import HalalDiscoverList from "../components/HalalDiscoverList";
+import { getHalalRestaurants } from "../lib/data";
 
 export default async function Home() {
-  const restaurants = await getRestaurantSummaries();
+  const restaurants = await getHalalRestaurants();
 
   return (
     <div className="min-h-screen px-4 pb-16 pt-8 md:px-10">
-      <RestaurantList restaurants={restaurants} />
+      <div className="mx-auto w-full max-w-6xl">
+        <HalalDiscoverList restaurants={restaurants} />
+      </div>
     </div>
   );
 }

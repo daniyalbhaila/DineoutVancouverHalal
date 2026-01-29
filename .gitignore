@@ -16,3 +16,4 @@ reports/
 halalList.html
 __pycache__/
 *.pyc
+HalalRestaurants.json*

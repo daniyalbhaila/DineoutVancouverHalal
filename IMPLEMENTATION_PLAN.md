@@ -3,7 +3,7 @@
 This checklist is the canonical status tracker. Mark items complete as they are delivered.
 
 ## Phase 1: Foundations
-- [ ] Finalize halal-friendly definition and disclaimer text.
+- [x] Finalize halal-friendly definition and disclaimer text.
 - [ ] Choose filter defaults for the MVP.
 
 ## Phase 2: Supabase Setup

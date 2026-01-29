@@ -73,6 +73,40 @@ create table if not exists match_overrides (
   created_at timestamptz not null default now()
 );
 
+create table if not exists halal_restaurants (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text not null unique,
+  category_name text,
+  categories text[],
+  address text,
+  city text,
+  neighborhood text,
+  postal_code text,
+  state text,
+  country_code text,
+  price text,
+  website text,
+  phone text,
+  rating numeric,
+  reviews_count integer,
+  place_id text,
+  lat numeric,
+  lng numeric,
+  google_url text,
+  image_url text,
+  opening_hours jsonb,
+  permanently_closed boolean,
+  temporarily_closed boolean,
+  source text not null default 'google_maps_list',
+  scraped_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_halal_restaurants_name on halal_restaurants (name);
+create index if not exists idx_halal_restaurants_city on halal_restaurants (city);
+create index if not exists idx_halal_restaurants_slug on halal_restaurants (slug);
+
 create index if not exists idx_restaurants_name on restaurants (name);
 create index if not exists idx_restaurants_slug on restaurants (slug);
 create index if not exists idx_menus_restaurant_id on menus (restaurant_id);
@@ -86,9 +120,11 @@ alter table menus enable row level security;
 alter table menu_tags enable row level security;
 alter table halal_sources enable row level security;
 alter table match_overrides enable row level security;
+alter table halal_restaurants enable row level security;
 
 create policy "public read restaurants" on restaurants for select using (true);
 create policy "public read menus" on menus for select using (true);
 create policy "public read menu_tags" on menu_tags for select using (true);
 create policy "public read halal_sources" on halal_sources for select using (true);
 create policy "public read match_overrides" on match_overrides for select using (true);
+create policy "public read halal_restaurants" on halal_restaurants for select using (true);

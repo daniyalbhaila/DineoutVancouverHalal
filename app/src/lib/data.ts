@@ -46,6 +46,29 @@ export type RestaurantDetail = {
   menuVariants: MenuVariant[];
 };
 
+export type HalalRestaurant = {
+  id: string;
+  name: string;
+  slug: string;
+  categoryName: string | null;
+  categories: string[] | null;
+  address: string | null;
+  city: string | null;
+  neighborhood: string | null;
+  price: string | null;
+  website: string | null;
+  phone: string | null;
+  rating: number | null;
+  reviewsCount: number | null;
+  googleUrl: string | null;
+  imageUrl: string | null;
+  lat: number | null;
+  lng: number | null;
+  openingHours: { day: string; hours: string }[] | null;
+  permanentlyClosed: boolean | null;
+  temporarilyClosed: boolean | null;
+};
+
 type RestaurantRow = {
   id: string;
   name: string;
@@ -77,6 +100,29 @@ type MenuTagRow = {
 type HalalSourceRow = {
   restaurant_id: string;
   status: string;
+};
+
+type HalalRestaurantRow = {
+  id: string;
+  name: string;
+  slug: string;
+  category_name: string | null;
+  categories: string[] | null;
+  address: string | null;
+  city: string | null;
+  neighborhood: string | null;
+  price: string | null;
+  website: string | null;
+  phone: string | null;
+  rating: number | null;
+  reviews_count: number | null;
+  google_url: string | null;
+  image_url: string | null;
+  lat: number | null;
+  lng: number | null;
+  opening_hours: { day: string; hours: string }[] | null;
+  permanently_closed: boolean | null;
+  temporarily_closed: boolean | null;
 };
 
 function toNumber(value: number | null): number | null {
@@ -279,4 +325,36 @@ export async function getRestaurantDetail(slug: string): Promise<RestaurantDetai
     halalSource,
     menuVariants,
   };
+}
+
+export async function getHalalRestaurants(): Promise<HalalRestaurant[]> {
+  const rows = await fetchAll<HalalRestaurantRow>("halal_restaurants", {
+    select:
+      "id,name,slug,category_name,categories,address,city,neighborhood,price,website,phone,rating,reviews_count,google_url,image_url,lat,lng,opening_hours,permanently_closed,temporarily_closed",
+  });
+
+  return rows
+    .map((row) => ({
+      id: row.id,
+      name: row.name,
+      slug: row.slug,
+      categoryName: row.category_name,
+      categories: row.categories,
+      address: row.address,
+      city: row.city,
+      neighborhood: row.neighborhood,
+      price: row.price,
+      website: row.website,
+      phone: row.phone,
+      rating: row.rating,
+      reviewsCount: row.reviews_count,
+      googleUrl: row.google_url,
+      imageUrl: row.image_url,
+      lat: row.lat,
+      lng: row.lng,
+      openingHours: row.opening_hours,
+      permanentlyClosed: row.permanently_closed,
+      temporarilyClosed: row.temporarily_closed,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
