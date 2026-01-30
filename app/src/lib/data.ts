@@ -368,6 +368,7 @@ export async function getHalalRestaurants(): Promise<HalalRestaurant[]> {
   });
 
   return rows
+    .filter((row) => !row.permanently_closed && !row.temporarily_closed)
     .map((row) => ({
       id: row.id,
       name: row.name,
