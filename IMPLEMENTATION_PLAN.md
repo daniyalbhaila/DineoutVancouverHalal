@@ -31,7 +31,8 @@ This checklist is the canonical status tracker. Mark items complete as they are 
 
 ## Phase 6: Next.js App
 - [x] Create Next.js app and connect Supabase.
-- [x] Build filterable list view.
+- [x] Build halal discovery list + map view.
+- [x] Build Dine Out filterable list view.
 - [x] Build restaurant detail view.
 - [x] Add disclaimers and tag badges.
 - [ ] Add shareable URL filters.

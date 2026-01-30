@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Menu } from "lucide-react";
+import { Button } from "./ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 
 const navItems = [
   { href: "/", label: "Discover" },
   { href: "/swipe", label: "Swipe" },
-  { href: "/dineout", label: "Dine Out" },
+  { href: "/dineout", label: "Dine Out 2026" },
 ];
 
 export default function SiteHeader() {
@@ -24,7 +27,7 @@ export default function SiteHeader() {
             <p className="text-xs text-[var(--muted)]">Vancouver</p>
           </div>
         </Link>
-        <nav className="flex items-center gap-2">
+        <nav className="hidden items-center gap-2 md:flex">
           {navItems.map((item) => {
             const active = pathname === item.href;
             return (
@@ -42,6 +45,35 @@ export default function SiteHeader() {
             );
           })}
         </nav>
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Menu className="h-4 w-4" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Menu</SheetTitle>
+              </SheetHeader>
+              <div className="mt-6 flex flex-col gap-2">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`rounded-xl px-3 py-2 text-sm transition ${
+                      pathname === item.href
+                        ? "bg-[var(--accent)] text-white"
+                        : "text-[var(--muted)]"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );

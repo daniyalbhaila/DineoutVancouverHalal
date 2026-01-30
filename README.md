@@ -1,6 +1,6 @@
-# Dine Out Vancouver Halal Friendly Finder
+# Vancouver Halal Finder + Dine Out
 
-Public, read-only web app for halal restaurant discovery, with a dedicated Dine Out Vancouver menu filter. The Dine Out data is scraped from the official site, then enriched with AI tags and cross-referenced with halal listings.
+Public, read-only web app for halal restaurant discovery in Vancouver, plus a dedicated Dine Out Vancouver menu filter. The Dine Out data is scraped from the official site, then enriched with AI tags and cross-referenced with halal listings.
 
 ## Repository Layout
 - scripts/: data ingestion and enrichment scripts
@@ -31,7 +31,8 @@ Set `SUPABASE_ANON_KEY` in `app/.env.local` (from Supabase Project Settings → 
 The map view uses mapcn + MapLibre with free tiles (no API key required).
 
 ## Disclaimers
-Halal-friendly means each course has at least one seafood or vegetarian option and alcohol is not included in the menu price. Alcohol may be served, and cross-contamination risk is possible. Tags are generated from menu text and external sources. Always confirm with the restaurant.
+- Discovery list: sourced from public halal directories; always confirm halal status directly with the restaurant.
+- Dine Out: halal-friendly means each course has at least one seafood or vegetarian option and alcohol is not included in the menu price. Alcohol may be served, and cross-contamination risk is possible. Tags are generated from menu text and external sources.
 
 ## Next Steps
 See IMPLEMENTATION_PLAN.md for the build checklist and status.

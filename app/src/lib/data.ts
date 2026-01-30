@@ -69,6 +69,8 @@ export type HalalRestaurant = {
   temporarilyClosed: boolean | null;
 };
 
+type OpeningHoursEntry = { day: string; hours: string };
+
 type RestaurantRow = {
   id: string;
   name: string;
@@ -120,7 +122,7 @@ type HalalRestaurantRow = {
   image_url: string | null;
   lat: number | null;
   lng: number | null;
-  opening_hours: { day: string; hours: string }[] | null;
+  opening_hours: unknown | null;
   permanently_closed: boolean | null;
   temporarily_closed: boolean | null;
 };
@@ -144,6 +146,38 @@ function uniqueStrings(values: string[]): string[] {
     result.push(value.trim());
   }
   return result;
+}
+
+function normalizeOpeningHours(value: unknown): OpeningHoursEntry[] | null {
+  if (!value) return null;
+  if (Array.isArray(value)) {
+    const entries = value
+      .map((entry) => {
+        if (!entry || typeof entry !== "object") return null;
+        const record = entry as { day?: string; hours?: string };
+        if (!record.day || !record.hours) return null;
+        return { day: record.day, hours: record.hours };
+      })
+      .filter((entry): entry is OpeningHoursEntry => Boolean(entry));
+    return entries.length ? entries : null;
+  }
+
+  if (typeof value === "object") {
+    const record = value as { weekday_text?: string[] };
+    if (Array.isArray(record.weekday_text)) {
+      const entries = record.weekday_text
+        .map((line) => {
+          if (typeof line !== "string") return null;
+          const [dayRaw, hoursRaw] = line.split(/:\s+/, 2);
+          if (!dayRaw || !hoursRaw) return null;
+          return { day: dayRaw.trim(), hours: hoursRaw.trim() };
+        })
+        .filter((entry): entry is OpeningHoursEntry => Boolean(entry));
+      return entries.length ? entries : null;
+    }
+  }
+
+  return null;
 }
 
 export async function getRestaurantSummaries(): Promise<RestaurantSummary[]> {
@@ -352,7 +386,7 @@ export async function getHalalRestaurants(): Promise<HalalRestaurant[]> {
       imageUrl: row.image_url,
       lat: row.lat,
       lng: row.lng,
-      openingHours: row.opening_hours,
+      openingHours: normalizeOpeningHours(row.opening_hours),
       permanentlyClosed: row.permanently_closed,
       temporarilyClosed: row.temporarily_closed,
     }))

@@ -162,30 +162,12 @@ export default function HalalDiscoverList({
       ? "Sorting by rating"
       : locationError ?? "Sorting by name";
 
-  if (view === "list" && sortMode === "distance" && !locationResolved) {
-    return (
-      <div className="space-y-6">
-        <Card className="fade-rise">
-          <CardContent className="space-y-3">
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">
-              Halal Restaurant Discovery
-            </p>
-            <h1 className="text-3xl font-semibold">Finding places near you</h1>
-            <p className="text-sm text-[var(--muted)]">
-              Waiting for location to sort by distance.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <Tabs value={view} onValueChange={setView}>
       <div className="space-y-6">
         <Card className="fade-rise">
-          <CardContent className="space-y-3">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <CardContent className="space-y-4">
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">
                   Halal Restaurant Discovery
@@ -196,15 +178,24 @@ export default function HalalDiscoverList({
                   the restaurant.
                 </p>
               </div>
-              <Badge variant="secondary">{filtered.length} places</Badge>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">{filtered.length} places</Badge>
+                <Badge variant="outline">{locationStatus}</Badge>
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <TabsList>
                 <TabsTrigger value="list">List</TabsTrigger>
                 <TabsTrigger value="map">Map</TabsTrigger>
               </TabsList>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-1 flex-wrap items-center gap-3">
+                <Input
+                  className="h-10 w-full max-w-sm"
+                  placeholder="Search by name or cuisine"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                />
                 <Select value={sortMode} onValueChange={(value) => setSortMode(value as SortMode)}>
                   <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Sort" />
@@ -217,12 +208,12 @@ export default function HalalDiscoverList({
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button variant="outline" size="sm">
-                      Filters
+                      Refine
                     </Button>
                   </SheetTrigger>
                   <SheetContent>
                     <SheetHeader>
-                      <SheetTitle>Filters</SheetTitle>
+                      <SheetTitle>Refine results</SheetTitle>
                     </SheetHeader>
                     <FilterPanel
                       query={query}
@@ -243,48 +234,27 @@ export default function HalalDiscoverList({
           </CardContent>
         </Card>
 
-        <div className={`grid gap-6 lg:grid-cols-[280px_1fr] ${view === "map" ? "hidden" : ""}`}>
-          <aside className="hidden lg:block">
+        <div className={view === "map" ? "hidden" : "space-y-4"}>
+          <div className="space-y-3">
+            {visible.map((restaurant) => (
+              <RestaurantRow
+                key={restaurant.id}
+                restaurant={restaurant}
+                userLocation={userLocation}
+                hydrated={hydrated}
+              />
+            ))}
+          </div>
+          {visible.length === 0 && (
             <Card>
               <CardContent>
-                <FilterPanel
-                  query={query}
-                  setQuery={setQuery}
-                  city={city}
-                  setCity={setCity}
-                  cities={cities}
-                  openOnly={openOnly}
-                  setOpenOnly={setOpenOnly}
-                  radiusKm={radiusKm}
-                  setRadiusKm={setRadiusKm}
-                  locationStatus={locationStatus}
-                />
+                <p className="text-sm text-[var(--muted)]">
+                  No restaurants match your filters.
+                </p>
               </CardContent>
             </Card>
-          </aside>
-
-          <div className="space-y-4">
-            <div className="space-y-3">
-              {visible.map((restaurant) => (
-                <RestaurantRow
-                  key={restaurant.id}
-                  restaurant={restaurant}
-                  userLocation={userLocation}
-                  hydrated={hydrated}
-                />
-              ))}
-            </div>
-            {visible.length === 0 && (
-              <Card>
-                <CardContent>
-                  <p className="text-sm text-[var(--muted)]">
-                    No restaurants match your filters.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-            <div ref={sentinelRef} />
-          </div>
+          )}
+          <div ref={sentinelRef} />
         </div>
       </div>
       {mapReady && (
@@ -467,7 +437,7 @@ function RestaurantRow({
               </div>
             )}
           </div>
-          <div>
+          <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h3 className="text-base font-semibold text-[var(--ink)]">
                 {restaurant.name}
@@ -476,15 +446,15 @@ function RestaurantRow({
                 <Badge variant="secondary">{restaurant.rating.toFixed(1)} ★</Badge>
               )}
             </div>
-            <div className="mt-1 text-xs text-[var(--muted)]">
+            <div className="text-xs text-[var(--muted)]">
               {restaurant.categoryName ?? "Halal restaurant"}
               {priceTier && ` · ${priceTier}`}
               {restaurant.reviewsCount ? ` · ${restaurant.reviewsCount} reviews` : ""}
             </div>
-            <div className="mt-2 text-sm text-[var(--ink)]">
+            <div className="text-sm text-[var(--ink)]">
               {locationLabel || "Location not available"}
             </div>
-            <div className="mt-2 flex flex-wrap gap-2 text-xs text-[var(--muted)]">
+            <div className="flex flex-wrap gap-2 text-xs text-[var(--muted)]">
               {openNow === true && <span>Open now</span>}
               {openNow === false && <span>Closed</span>}
               {openNow === null && <span>Hours loading</span>}
@@ -492,7 +462,7 @@ function RestaurantRow({
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-row flex-wrap items-center gap-2 md:flex-col md:items-start">
           {restaurant.googleUrl && (
             <Button asChild size="sm">
               <a href={restaurant.googleUrl} target="_blank" rel="noreferrer">
