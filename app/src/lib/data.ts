@@ -365,6 +365,10 @@ export async function getHalalRestaurants(): Promise<HalalRestaurant[]> {
   const rows = await fetchAll<HalalRestaurantRow>("halal_restaurants", {
     select:
       "id,name,slug,category_name,categories,address,city,neighborhood,price,website,phone,rating,reviews_count,google_url,image_url,lat,lng,opening_hours,permanently_closed,temporarily_closed",
+    filters: [
+      "or=(permanently_closed.is.false,permanently_closed.is.null)",
+      "or=(temporarily_closed.is.false,temporarily_closed.is.null)",
+    ],
   });
 
   return rows
