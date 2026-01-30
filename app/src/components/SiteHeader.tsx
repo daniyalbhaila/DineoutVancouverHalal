@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui
 const navItems = [
   { href: "/", label: "Discover" },
   { href: "/swipe", label: "Swipe" },
-  { href: "/dineout", label: "Dine Out" },
+  { href: "/dineout", label: "Dine Out 2026 — Halal Friendly Menus" },
 ];
 
 export default function SiteHeader() {

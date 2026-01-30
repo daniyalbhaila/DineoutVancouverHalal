@@ -2,9 +2,9 @@ import RestaurantList from "../../components/RestaurantList";
 import { getRestaurantSummaries } from "../../lib/data";
 
 export const metadata = {
-  title: "Dine Out Vancouver Halal-Friendly Menus",
+  title: "Dine Out 2026 — Halal-Friendly Menus",
   description:
-    "Filter Dine Out Vancouver menus for halal-friendly options, price tiers, and dietary tags with transparent sourcing.",
+    "Filter Dine Out Vancouver 2026 menus for halal-friendly options, price tiers, and dietary tags with transparent sourcing.",
   alternates: {
     canonical: "/dineout",
   },

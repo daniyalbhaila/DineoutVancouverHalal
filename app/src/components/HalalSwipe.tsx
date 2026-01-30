@@ -102,11 +102,11 @@ export default function HalalSwipe({ restaurants }: { restaurants: HalalRestaura
         <Card className="fade-rise">
           <CardContent className="space-y-3">
             <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">
-              Halal Discovery
+              Halal Restaurants
             </p>
             <h1 className="text-3xl font-semibold">Swipe to find a place</h1>
             <p className="text-sm text-[var(--muted)]">
-              Swipe right to save, left to skip. Results are randomized each session.
+              Swipe right to save, left to skip. These are restaurants that serve halal.
             </p>
             <div className="flex gap-3 text-xs text-[var(--muted)]">
               <span>Saved: {liked.length}</span>
