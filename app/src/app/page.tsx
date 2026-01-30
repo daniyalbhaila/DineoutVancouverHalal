@@ -1,6 +1,15 @@
 import HalalDiscoverList from "../components/HalalDiscoverList";
 import { getHalalRestaurants } from "../lib/data";
 
+export const metadata = {
+  title: "Halal Restaurants in Vancouver",
+  description:
+    "Explore halal-friendly restaurants across Greater Vancouver with map and list views, confidence tiers, and live hours.",
+  alternates: {
+    canonical: "/",
+  },
+};
+
 export default async function Home() {
   const restaurants = await getHalalRestaurants();
 

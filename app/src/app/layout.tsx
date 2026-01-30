@@ -14,9 +14,30 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "Dine Out Vancouver Halal Finder",
+  metadataBase: new URL("https://vancouverhalal.vercel.app"),
+  title: {
+    default: "Vancouver Halal Finder + Dine Out",
+    template: "%s · Vancouver Halal Finder",
+  },
   description:
-    "Filter Dine Out Vancouver menus for halal-friendly options and clear price ranges.",
+    "Discover halal-friendly restaurants in Vancouver and filter Dine Out Vancouver menus with clear confidence and pricing.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Vancouver Halal Finder + Dine Out",
+    description:
+      "Discover halal-friendly restaurants in Vancouver and filter Dine Out Vancouver menus with clear confidence and pricing.",
+    url: "/",
+    siteName: "Vancouver Halal Finder",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vancouver Halal Finder + Dine Out",
+    description:
+      "Discover halal-friendly restaurants in Vancouver and filter Dine Out Vancouver menus with clear confidence and pricing.",
+  },
 };
 
 export default function RootLayout({
